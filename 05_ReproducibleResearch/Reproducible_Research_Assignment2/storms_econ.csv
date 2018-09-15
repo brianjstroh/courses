@@ -1,0 +1,214 @@
+"","Event.Type","PROPDMG","PROPDMGEXP","CROPDMG","CROPDMGEXP","Event.Frequency"
+"2","?",5,17,0,1,1
+"3","agricultural ice",0,3,28.82,27,3
+"4","and stream flood",1200,34,0,2,2
+"5","apache county",5,17,0,1,1
+"6","astronomical  tide",933.5,142,0,14,8
+"7","astronomical low tide",320,34,0,14,2
+"8","avalanche",1628.9,941,0,145,55
+"9","beach erosion",100,17,0,1,1
+"10","blizzard",243532.89,48696,4359.94,11117,2827
+"11","blizzard storm",500,17,0,1,1
+"12","blizzard/blizzard",500,17,0,1,1
+"13","blizzarditation",790,306,0,18,18
+"14","blizzards & flood",1.5,19,20,7,1
+"15","blowing dust",20,17,0,1,1
+"16","breakup flood",20,4,0,1,1
+"17","coastal  flood",15,19,0,1,1
+"18","coastal erosion",766,17,0,1,1
+"19","coastal surge",500,17,0,1,1
+"20","cold",14876.04,1876,8880.64,724,158
+"21","cold air",0.05,17,0.05,7,1
+"22","cold and wet condition",0,1,66,9,1
+"23","cool and wet",0,1,5,9,1
+"24","dam break",3,36,0,2,2
+"25","damaging ice",8,24,426.1,40,6
+"26","dense smoke",100,17,0,7,1
+"27","downburst",2,17,0,1,1
+"28","dust storm",5768.63,2791,1601.5,605,165
+"29","dust storm/ wind",50,17,500,7,1
+"30","early ice",0,1,42,9,1
+"31","erosion/cstl flood",16.2,38,0,2,2
+"32","flood",2465027.03,558482,366339.73,132230,32641
+"33","flood - rain",12,34,0,2,2
+"34","flood flash",5,17,0,1,1
+"35","flood from ice jam",250,85,0,5,5
+"36","flood landslide",50,17,0,1,1
+"37","flood wind",0.41,1,0,2,1
+"38","flood/",500,17,0,1,1
+"39","flood/ street",2,17,0,1,1
+"40","flood/flash",11,36,0,2,2
+"41","flood/flashflood",5,17,0,1,1
+"42","flood/landslide",1,17,0,1,1
+"43","flood/rain",2,9,112.8,46,6
+"44","flood/thunderstorm wi",500,17,0,1,1
+"45","fog",17075.26,2237,0,347,131
+"46","forestfire",5,19,500,7,1
+"47","freezing fog",184,121,0,49,7
+"48","gradient wind",37,102,0,6,6
+"49","grassfire",10,17,0,1,1
+"50","ground blizzard",100,34,0,2,2
+"51","gustnado",102.05,85,1.55,23,5
+"52","hail",697500.38,412516,585715.01,115845,26430
+"53","hail 0.75",1,17,0,1,1
+"54","hail 075",0,1,10,7,1
+"55","hail 100",5,17,10,7,1
+"56","hail 125",0,1,10,7,1
+"57","hail 150",0,1,50,7,1
+"58","hail 175",20.1,36,0,2,2
+"59","hail 200",0,1,10,7,1
+"60","hail 275",125.1,53,0,3,3
+"61","hail 450",0.2,19,0,1,1
+"62","hail 75",1,17,0,1,1
+"63","hail damage",150,17,0,1,1
+"64","hail/wind",500.5,36,50.15,28,4
+"65","hailstorm",241,57,0,3,3
+"66","hard ice",0,2,13.1,18,2
+"67","heat",7331.91,3528,35381.8,2472,332
+"68","hurricane",25186.65,3941,11637.79,1023,222
+"69","hvy rain",0,1,3,7,1
+"70","ice",13841.09,3935,9130.39,1271,261
+"71","ice and snow",5,19,0,1,1
+"72","ice floe",100,34,0,2,2
+"73","ice ice",4.8,36,0.8,14,2
+"74","ice jam",5,17,0,1,1
+"75","ice jam flood",521,87,5,13,5
+"76","ice jam flood (minor",1,17,0,1,1
+"77","ice\ice",500,17,0,1,1
+"78","lake-effect snow",14141,3306,0,1346,194
+"79","lake effect snow",67,68,0,4,4
+"80","lake flood",30,17,0,1,1
+"81","lake snow",500,17,0,1,1
+"82","lakeshore flood",47.5,89,0,35,5
+"83","landslide",19392.94,3415,37,799,197
+"84","landslump",570,17,0,1,1
+"85","landspout",7,34,0,2,2
+"86","late surfson snow",180,17,0,1,1
+"87","lighting",5,17,0,1,1
+"88","lightning",603351.78,175494,3580.61,31818,10360
+"89","lightning wauseon",30,17,0,1,1
+"90","lightningand rain",28,17,0,1,1
+"91","lightningire",5,19,0,1,1
+"92","lightningrain",5,17,0,1,1
+"93","lightningthunderstorm",10,17,0,1,1
+"94","ligntning",5,17,0,1,1
+"95","major flood",105,57,0,3,3
+"96","marine hail",4,34,0,14,2
+"97","microburst",80,68,0,4,4
+"98","microburst wind",450,17,0,1,1
+"99","mix",705.6,140,0,8,8
+"100","mud slide",650.1,68,0,4,4
+"101","mud slides urban flood",5,17,0,1,1
+"102","non-thunderstorm",40,17,0,1,1
+"103","other",55.5,81,1034.4,213,33
+"104","precipitation",500,17,0,1,1
+"105","rain",53442.74,17386,12432.8,4320,1058
+"106","rain and flood",600,17,0,1,1
+"107","rain/ surf",13.5,19,1.5,9,1
+"108","rain/lightning",5,19,0,1,1
+"109","rain/severe weather",2.5,14,0,1,1
+"110","rain/stream urban",5,17,0,1,1
+"111","rains",864,155,353,39,9
+"112","rainstorm",50,17,0,1,1
+"113","rock slide",150,17,0,1,1
+"114","rural flood",1.2,17,0,1,1
+"115","seiche",980,153,0,33,9
+"116","severe thunderstorm",1042.7,189,46.2,44,12
+"117","severe turbulence",50,17,0,1,1
+"118","shower",0.5,17,0,1,1
+"119","snow",131444.31,25127,2175.72,3166,1468
+"120","snow-squall",88,255,0,15,15
+"121","snow accumulation",5,17,0,1,1
+"122","snow and snow",100,34,0,2,2
+"123","snow ice",306,174,0,10,10
+"124","snow/ ice",5,17,0,1,1
+"125","snow/blizzard",1000,34,0,2,2
+"126","snow/cold",1000,34,0,2,2
+"127","snow/ice",6.2,57,0,3,3
+"128","snow/snow",601.3,127,0,7,7
+"129","snow/snow/ice",100,34,0,2,2
+"130","snow/squall",100,34,0,2,2
+"131","snow/wind",50,17,0,1,1
+"132","snowfall",85,17,0,1,1
+"133","snowmelt flood",55,36,0,2,2
+"134","snowpack",5,19,0,1,1
+"135","storm force wind",200,17,0,1,1
+"136","stream flood",0,1,5,7,1
+"137","surf",11510.66,5176,70,1012,302
+"138","surf advisory",200,17,0,1,1
+"139","surf flood",50,17,0,1,1
+"140","thuderstorm wind",50,17,5,7,1
+"141","thundeerstorm wind",5,17,0,1,1
+"142","thunderestorm wind",1,17,0,1,1
+"143","thunderstorm",2665597.76,1973421,194765.53,413724,117139
+"144","thunderstorm (41)",8,17,0,1,1
+"145","thunderstorm 40",1,17,0,1,1
+"146","thunderstorm 45",10,17,0,1,1
+"147","thunderstorm 55",30,34,0,2,2
+"148","thunderstorm 60 mph",70,34,0,2,2
+"149","thunderstorm 63 mph",25,17,0,1,1
+"150","thunderstorm 65 mph",4,17,0,1,1
+"151","thunderstorm 65)",20,17,0,1,1
+"152","thunderstorm 65mph",4,17,0,1,1
+"153","thunderstorm 98 mph",25,17,0,1,1
+"154","thunderstorm and",5,17,0,1,1
+"155","thunderstorm and lightning",80,17,0,1,1
+"156","thunderstorm damage",5,17,0,1,1
+"157","thunderstorm damage to",2,17,0,1,1
+"158","thunderstorm g45",1,17,0,1,1
+"159","thunderstorm g50",2,15,0,1,1
+"160","thunderstorm g55",5,17,0,1,1
+"161","thunderstorm g58",0.1,19,0,1,1
+"162","thunderstorm g60",0,2,20,14,2
+"163","thunderstorm hail",710,633,99,71,41
+"164","thunderstorm lightning",190.5,102,5,12,6
+"165","thunderstorm tree",4,17,0,1,1
+"166","thunderstorm win",1,17,0,1,1
+"167","thunderstorm.",5,18,3,8,2
+"168","thunderstorm/ flood",20,34,30,8,2
+"169","thunderstorm/ tree",21,85,0,5,5
+"170","thunderstorm/awning",2,17,0,1,1
+"171","thunderstorm/funnel clou",5,17,0,1,1
+"172","thunderstorm/lightning",5,17,0,1,1
+"173","thunderstorm53",50,17,0,1,1
+"174","thunderstormhail",40,17,0,1,1
+"175","thunderstormind",0.5,17,0,1,1
+"176","thunderstrom wind",5,17,0,1,1
+"177","thunerstorm wind",1,17,0,1,1
+"178","tide",150,5,0,1,1
+"179","tornado",3224346.06,675739,100021.02,76318,39432
+"180","tornado-",210.5,119,0,7,7
+"181","tornado-tornado",15,17,0,1,1
+"182","tornado f0",76.2,85,7.2,17,5
+"183","tornado f1",871.5,70,0,4,4
+"184","tornadoe",0,2,1,14,2
+"185","torndao",0.5,17,0,1,1
+"186","tropical depression",738,597,0,77,35
+"187","tropical storm",48923.68,7019,6399.12,2058,408
+"188","tropical storm alberto",5,19,0,1,1
+"189","tropical storm dean",400,17,50,7,1
+"190","tropical storm jerry",604,36,16,18,2
+"191","tunderstorm wind",75,17,0,1,1
+"192","unsurfsonable cold",0,1,5.1,9,1
+"193","unsurfsonal rain",0,2,10,18,2
+"194","urban and small",5,17,0,1,1
+"195","urban flood",18900.1,3759,1290,863,221
+"196","urban small",0.05,17,0,1,1
+"197","urban/stream",5,17,0,1,1
+"198","urban/stream flood",51.05,153,0,9,9
+"199","volcanic ash",500,34,0,2,2
+"200","wet microburst",35,51,0,3,3
+"201","wetnes",0,1,142,9,1
+"202","wildfire",125203.29,18901,9065.74,4937,1111
+"203","wind",449371.9,160169,21180.21,41319,9403
+"204","wind and surf",1,19,0,1,1
+"205","wind chill",50,17,0,1,1
+"206","wind damage",88.1,175,55,22,11
+"207","wind/blizzard",50,17,0,1,1
+"208","wind/hail",20.5,34,0,2,2
+"209","wind/hvy rain",2,17,0,1,1
+"210","wind/rain",2,17,0,1,1
+"211","winds",5,19,0,1,1
+"212","winds rain",7.5,19,10,7,1
+"213","winds/",50,17,0,1,1
+"214","winds/rain",5,17,0,1,1
