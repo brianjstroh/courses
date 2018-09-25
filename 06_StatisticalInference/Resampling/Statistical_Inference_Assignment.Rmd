@@ -1,0 +1,169 @@
+---
+title: "Statistical_Inference_Assignment"
+author: "Brian Stroh"
+date: "September 25, 2018"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+```
+
+## ToothGrowth Inferential Data Analysis
+
+###ToothGrowth Data Summaries
+```{r ToothGrowth Summaries}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~RESAMPLING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+data("ToothGrowth")
+
+#Creating subsets for hypothesis testing and resampling
+d.5<-filter(ToothGrowth,dose==.5)
+d1<-filter(ToothGrowth,dose==1)
+d2<-filter(ToothGrowth,dose==2)
+sOJ<-filter(ToothGrowth,supp=="OJ")
+sVC<-filter(ToothGrowth,supp=="VC")
+
+#Summary for full dataset
+summary(ToothGrowth)
+
+#Summary for supplement dose of .5 mg
+summary(d.5)
+
+#Summary for supplement dose of 1 mg
+summary(d1)
+
+#Summary for supplement dose of 2 mg
+summary(d2)
+
+#Summary for supplement OJ
+summary(sOJ)
+
+#Summary for supplement VC
+summary(sVC)
+```
+
+###ToothGrowth Resampling Visualizations
+```{r Dosage_Resampling, message= FALSE}
+reSample_Dose<-function(n=1000,yVar=3){
+      rows.5<-sample(1:nrow(d.5),size=n,replace=TRUE)
+      rows1<-sample(1:nrow(d1),size=n,replace=TRUE)
+      rows2<-sample(1:nrow(d2),size=n,replace=TRUE)
+      
+      dSamp.5<-d.5[rows.5,c(1,yVar)]
+      dSamp1<-d1[rows1,c(1,yVar)]
+      dSamp2<-d2[rows2,c(1,yVar)]
+      
+      d.5_avg<-mean(dSamp.5$len)
+      d1_avg<-mean(dSamp1$len)
+      d2_avg<-mean(dSamp2$len)
+      
+      return(c(d.5_avg,d1_avg,d2_avg))
+}
+
+mySample<-data.frame(t(replicate(10000,reSample_Dose(n=20))))
+names(mySample) <- c("dose.5","dose1","dose2")
+mySampleMelt<-melt(mySample)
+names(mySampleMelt)<-c("dose","tooth.length")
+ggplot(mySampleMelt,aes(x=tooth.length, color = dose)) +
+      geom_histogram(binwidth = .01)+
+      ggtitle("Distributions of Toothgrowth Length at Each Dosage")
+```
+
+As we can see from the 10,000 resamples, it is likely that there is a different average
+tooth growth at each dose level. There is very little overlap in these resampled averages,
+so it is likely that we will reject a hypothesis that the average tooth growth is the same
+across all dose levels.
+A resample size of 20 was chosen for this exercise because there are 20 data points for each
+dose level in the original dataset.
+
+
+
+```{r Supplement_Resampling, message=FALSE}
+reSample_Supp<-function(n=1000,yVar=2){
+      rowsOJ<-sample(1:nrow(sOJ),size=n,replace=TRUE)
+      rowsVC<-sample(1:nrow(sVC),size=n,replace=TRUE)
+      
+      sSampOJ<-sOJ[rowsOJ,c(1,yVar)]
+      sSampVC<-sVC[rowsVC,c(1,yVar)]
+      
+      OJ_avg<-mean(sSampOJ$len)
+      VC_avg<-mean(sSampVC$len)
+      
+      return(c(OJ_avg,VC_avg))
+}
+
+mySample2<-data.frame(t(replicate(10000,reSample_Supp(n=30))))
+names(mySample2) <- c("suppOJ","suppVC")
+mySampleMelt2<-melt(mySample2)
+names(mySampleMelt2)<-c("supp","tooth.length")
+ggplot(mySampleMelt2,aes(x=tooth.length, color = supp)) +
+      geom_histogram(binwidth = .01)+
+      ggtitle("Distributions of Toothgrowth Length for Each Supplement")
+```
+
+As we can see from the 10,000 resamples, it is unlikely that we will reject a hypothesis that 
+the average tooth growth is the same across both supplement levels. There is significant overlap
+in the resampled tooth growth distributions for these two supplements.
+A resample size of 30 was chosen for this exercise because there are 30 data points for each
+supplement level in the original dataset.
+
+
+
+```{r Supplement_Resampling_Part2, message=FALSE}
+reSample_Supp<-function(n=1000,yVar=2){
+      rowsOJ<-sample(1:nrow(sOJ),size=n,replace=TRUE)
+      rowsVC<-sample(1:nrow(sVC),size=n,replace=TRUE)
+      
+      sSampOJ<-sOJ[rowsOJ,c(1,yVar)]
+      sSampVC<-sVC[rowsVC,c(1,yVar)]
+      
+      OJ_avg<-mean(sSampOJ$len)
+      VC_avg<-mean(sSampVC$len)
+      
+      return(c(OJ_avg,VC_avg))
+}
+
+mySample2<-data.frame(t(replicate(10000,reSample_Supp(n=300))))
+names(mySample2) <- c("suppOJ","suppVC")
+mySampleMelt2<-melt(mySample2)
+names(mySampleMelt2)<-c("supp","tooth.length")
+ggplot(mySampleMelt2,aes(x=tooth.length, color = supp)) +
+      geom_histogram(binwidth = .01)+
+      ggtitle("Distributions of Toothgrowth Length for Each Supplement")
+```
+
+As evidenced from this figure, it is likely that we would reject the null hypothesis of the two supplements having
+the same average tooth growth length **if our sample size was 10 times larger** than in the original dataset, assuming that
+the same distribution of tooth growth would result.
+
+
+
+###ToothGrowth T-Testing
+```{r Hypothesis_Testing}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~HYPOTHESIS TESTING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Null Hypothesis is: The average tooth growth is identical across all doses and all supplements
+
+#T-testing the alternative hypothesis: The average tooth growth changes as supplement dosage changes.
+t.test(len~dose,paired=FALSE,data=rbind(d1,d.5))
+t.test(len~dose,paired=FALSE,data=rbind(d2,d1))
+t.test(len~dose,paired=FALSE,data=rbind(d2,d.5))
+```
+
+We tested each of the dosage subsets against each other, and with each set of doses we can be 95% confident that the average
+tooth growth is different between the dose amounts. Our P value is much smaller than 5% in each case. Thus, we reject the null hypothesis in favor of the alternative hypothesis that average tooth growth varies by supplement dose amount.
+
+```{r}
+#T-testing the alternative hypothesis: The average tooth growth changes as supplement changes.
+t.test(len~supp,paired=FALSE,data=ToothGrowth)
+```
+
+We tested the two supplement subsets against each other, and we cannot be 95% confident that the average tooth growth is different between the supplements. This is because:  
+      1. Our P-Value for this test is greater than our alpha 5% (1 - 95%).  
+      2. Our 95% confidence interval contains the possibility of a 0 difference in average tooth growth as a function of supplement type.  
+Thus, we fail to reject the null hypothesis in favor of the alternative hypothesis that average tooth growth varies by supplement.
