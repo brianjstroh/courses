@@ -1,20 +1,120 @@
 ---
-title: "Statistical_Inference_Assignment"
+title: "Statistical Inference Assignment"
 author: "Brian Stroh"
-date: "September 25, 2018"
-output: html_document
+date: "September 26, 2018"
+output: pdf_document
 ---
 
 ```{r setup, message=FALSE}
 library(dplyr)
 library(reshape2)
 library(ggplot2)
+library(gridExtra)
+set.seed(51)
 ```
 
-## ToothGrowth Inferential Data Analysis
+##Part 1: Exponential Simulation
+
+###Overview
+In the Exponential Simulation section of this report, we will explore how the [Central Limit Theorem](https://en.wikipedia.org/wiki/Central_limit_theorem) can be applied to a non-normal variable. We will create 1000 samples of 40 random instances from an exponential distribution. Then we will plot a histogram of the mean and variance of each of the 1000 samples and compare these to the equivalent normal curves.
+
+###Simulations
+```{r Simulations}
+mySample<-matrix(rexp(n=40*1000, rate = .2),40,1000)
+Means<-colSums(mySample)/40 
+#Variance calculated using the formula : Var[x] = E[X^2] - (E[x])^2     
+#source: https://en.wikipedia.org/wiki/Variance
+Variances<-colSums(mySample^2)/40-(colSums(mySample)/40)^2
+mySampleStats<-tbl_df(cbind(Means,Variances))
+```
+
+###Sample Mean versus Theoretical Mean
+```{r MeanCompare, fig.width= 12.5}
+ggplot(mySampleStats, aes(x = Means, mean = mean(mySampleStats$Means), sd = sqrt(var(mySampleStats$Means)), 
+                          binwidth = .2, n = nrow(mySampleStats))) +
+      theme_dark() +
+      geom_histogram(binwidth = .2, colour = "white", fill = "blue", size = 0.1) +
+      stat_function(fun = function(x) dnorm(x, mean = mean(mySampleStats$Means), 
+                                            sd = sqrt(var(mySampleStats$Means))) * nrow(mySampleStats) * .2,
+                    aes(color = "Normal_Distribution"), size =1) +
+      geom_vline(aes(xintercept = (1/.2), color = "Theoretical_Mean"), linetype="dashed", size=1.5) +
+      geom_vline(aes(xintercept = mean(mySampleStats$Means), color = "Sample_Mean"), size=1) +
+      scale_color_manual(name = "Chart Element", values = c(Theoretical_Mean = "green", 
+                                                            Sample_Mean = "magenta", 
+                                                            Normal_Distribution = "red")) +
+      ggtitle("Distribution of Exponential Means") +
+      annotate("text",label=paste("Sample Mean =",round(mean(mySampleStats$Means),3)),
+               x=6,y=100,size=5,color="magenta")+
+      annotate("text",label=paste("Theoretical Mean =",1/.2),
+               x=6,y=95,size=5,color="green")+
+      annotate("text",label=paste("Normal Distribution : N(mu=",round(mean(mySampleStats$Means),3),
+                                  ", sd =",round(sqrt(var(mySampleStats$Means)),3),")"),
+               x=6.65,y=90,size=5,color="red")
+```
+
+It can be seen from the figure above that the Central Limit Theorem applies well to our exponential sample means. The Theoretical Mean is quite close to the Sample Mean and the shape of the histogram of the means is very [Gaussian](https://en.wikipedia.org/wiki/Normal_distribution). This distribution is approximately normal.
+
+###Sample Variance versus Theoretical Variance
+```{r VarianceCompare, fig.width= 11}
+ggplot(mySampleStats, aes(x = Variances, mean = mean(mySampleStats$Variances), 
+                          sd = sqrt(var(mySampleStats$Variances)), 
+                          binwidth = 2, n = nrow(mySampleStats))) +
+      theme_dark() +
+      geom_histogram(binwidth = 2, colour = "white", fill = "blue", size = 0.1) +
+      stat_function(fun = function(x) dnorm(x, mean = mean(mySampleStats$Variances), 
+                                            sd = sqrt(var(mySampleStats$Variances))) * nrow(mySampleStats) * 2,
+                    aes(color = "Normal_Distribution"), size = 1) +
+      geom_vline(aes(xintercept = (1/.2)^2, color = "Theoretical_Variance"), linetype="dashed", size=1.5) +
+      geom_vline(aes(xintercept = mean(mySampleStats$Variances), color = "Sample_Variance"), size=1) +
+      scale_color_manual(name = "Chart Element", values = c(Theoretical_Variance = "green", 
+                                                            Sample_Variance = "magenta", 
+                                                            Normal_Distribution = "red")) +
+      ggtitle("Distribution of Exponential Variances") +
+      annotate("text",label=paste("Sample Variance =",round(mean(mySampleStats$Variances),3)),
+               x=40,y=90,size=5,color="magenta")+
+      annotate("text",label=paste("Theoretical Variance =",(1/.2)^2),
+               x=40,y=85,size=5,color="green") +
+      annotate("text",label=paste("Normal Distribution : N(mu=",round(mean(mySampleStats$Variances),3),
+                                  ", sd =",round(sqrt(var(mySampleStats$Variances)),3),")"),
+               x=50,y=80,size=5,color="red")
+```
+
+Comparing the figure above to the equivalent figure for the means shows that the Central Limit Theorem does not apply as well to the variance of our exponential samples. The Theoretical Variance is still close to the Sample Variance, but the shape of the histogram of the variances is not nearly as Gaussian shaped as the histogram of the means was. Perhaps this is due to the unit scale of the variance relative to the mean. We will attempt to reduce some of the skew shown in the above figure by instead plotting the standard deviations of each of the samples.
+
+###Sample StandardDeviation versus Theoretical StandardDeviation
+```{r StdDevCompare, fig.width= 11}
+ggplot(mySampleStats, aes(x = sqrt(Variances), mean = mean(sqrt(mySampleStats$Variances)), 
+                          sd = sqrt(var(sqrt(mySampleStats$Variances))),
+                          binwidth = .2, n = nrow(mySampleStats))) +
+      theme_dark() +
+      geom_histogram(binwidth = .2, colour = "white", fill = "blue", size = 0.1) +
+      stat_function(fun = function(x) dnorm(x, mean = mean(sqrt(mySampleStats$Variances)), 
+                                            sd = sqrt(var(sqrt(mySampleStats$Variances)))) * 
+                                                 nrow(mySampleStats) * .2,
+                    aes(color = "Normal_Distribution"), size = 1) +
+      geom_vline(aes(xintercept = (1/.2), color = "Theoretical_Standard_Deviation"), linetype="dashed", 
+                 size=1.5) +
+      geom_vline(aes(xintercept = mean(sqrt(mySampleStats$Variances)), color = "Sample_Standard_Deviation"), 
+                 size=1) +
+      scale_color_manual(name = "Chart Element", values = c(Theoretical_Standard_Deviation = "green", 
+                                                            Sample_Standard_Deviation = "magenta", 
+                                                            Normal_Distribution = "red")) +
+      ggtitle("Distribution of Exponential Standard Deviations")+
+      annotate("text",label=paste("Sample Std Dev =",round(mean(sqrt(mySampleStats$Variances)),3)),
+               x=6.05,y=100,size=5,color="magenta") +
+      annotate("text",label=paste("Theoretical Std Dev =",1/.2),
+               x=6,y=95,size=5,color="green")+
+      annotate("text",label=paste("Normal Distribution : N(mu=",round(mean(sqrt(mySampleStats$Variances)),3),
+                                  ", sd =",round(sqrt(var(sqrt(mySampleStats$Variances))),3),")"),
+               x=7,y=90,size=5,color="red")
+```
+
+The Standard Deviation distribution appears to be quite Gaussian and is approximately normal. This means that the Central Limit Theorem can be applied to summary statistics other than just the mean.
+
+##Part 2: ToothGrowth Inferential Data Analysis
 
 ###ToothGrowth Data Summaries
-```{r ToothGrowth Summaries}
+```{r ToothGrowth Summaries, fig.width=11}
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~RESAMPLING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +145,17 @@ summary(sOJ)
 
 #Summary for supplement VC
 summary(sVC)
+
+p1<-ggplot(ToothGrowth, aes(x= supp, y=len, color=dose), geom = "dotplot") + geom_point() + 
+      ggtitle("Supplement vs. Tooth Growth")
+p2<-ggplot(ToothGrowth, aes(x= dose, y=len, color=supp), geom = "dotplot") + geom_point() + 
+      ggtitle("Supplement Dosage vs. Tooth Growth")
+grid.arrange(p1, p2, ncol = 2)
 ```
+
+In the Supplement vs. Tooth Growth plot above, we can see that the range for the OJ supplement lies entirely within the range of the VC supplement. This will likely cause problems when trying to differentiate the impacts of each of the supplements on tooth growth.  
+In the Supplement Dosage vs. Tooth Growth plot above, so can see a noticeable shift in tooth gowth as the dosage increases, although there is still a noticeable amount of overlap in the ranges.  
+Conducting a quick [resampling](https://en.wikipedia.org/wiki/Resampling_(statistics)) exercise should help to clear up whether the distributions are in fact distinct or not.
 
 ###ToothGrowth Resampling Visualizations
 ```{r Dosage_Resampling, message= FALSE}
@@ -70,13 +180,13 @@ names(mySample) <- c("dose.5","dose1","dose2")
 mySampleMelt<-melt(mySample)
 names(mySampleMelt)<-c("dose","tooth.length")
 ggplot(mySampleMelt,aes(x=tooth.length, color = dose)) +
-      geom_histogram(binwidth = .01)+
+      geom_histogram(binwidth = .01) +
       ggtitle("Distributions of Toothgrowth Length at Each Dosage")
 ```
 
 As we can see from the 10,000 resamples, it is likely that there is a different average
 tooth growth at each dose level. There is very little overlap in these resampled averages,
-so it is likely that we will reject a hypothesis that the average tooth growth is the same
+so will probably reject a hypothesis that the average tooth growth is the same
 across all dose levels.
 A resample size of 20 was chosen for this exercise because there are 20 data points for each
 dose level in the original dataset.
@@ -102,7 +212,7 @@ names(mySample2) <- c("suppOJ","suppVC")
 mySampleMelt2<-melt(mySample2)
 names(mySampleMelt2)<-c("supp","tooth.length")
 ggplot(mySampleMelt2,aes(x=tooth.length, color = supp)) +
-      geom_histogram(binwidth = .01)+
+      geom_histogram(binwidth = .01) +
       ggtitle("Distributions of Toothgrowth Length for Each Supplement")
 ```
 
@@ -133,7 +243,7 @@ names(mySample2) <- c("suppOJ","suppVC")
 mySampleMelt2<-melt(mySample2)
 names(mySampleMelt2)<-c("supp","tooth.length")
 ggplot(mySampleMelt2,aes(x=tooth.length, color = supp)) +
-      geom_histogram(binwidth = .01)+
+      geom_histogram(binwidth = .01) +
       ggtitle("Distributions of Toothgrowth Length for Each Supplement")
 ```
 
@@ -144,6 +254,11 @@ the same distribution of tooth growth would result.
 
 
 ###ToothGrowth T-Testing
+####Assumptions:
+1. The ToothGrowth dataset contains all available information.
+2. The experiment conducted was done in a scientific manner.
+      + This includes the assumption that there was no overlap in test subjects being given varying doses or varying supplements.
+
 ```{r Hypothesis_Testing}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~HYPOTHESIS TESTING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,6 +270,7 @@ t.test(len~dose,paired=FALSE,data=rbind(d2,d1))
 t.test(len~dose,paired=FALSE,data=rbind(d2,d.5))
 ```
 
+####Dosage Conclusions
 We tested each of the dosage subsets against each other, and with each set of doses we can be 95% confident that the average
 tooth growth is different between the dose amounts. Our P value is much smaller than 5% in each case. Thus, we reject the null hypothesis in favor of the alternative hypothesis that average tooth growth varies by supplement dose amount.
 
@@ -163,6 +279,7 @@ tooth growth is different between the dose amounts. Our P value is much smaller 
 t.test(len~supp,paired=FALSE,data=ToothGrowth)
 ```
 
+####Supplement Conclusions
 We tested the two supplement subsets against each other, and we cannot be 95% confident that the average tooth growth is different between the supplements. This is because:  
       1. Our P-Value for this test is greater than our alpha 5% (1 - 95%).  
       2. Our 95% confidence interval contains the possibility of a 0 difference in average tooth growth as a function of supplement type.  

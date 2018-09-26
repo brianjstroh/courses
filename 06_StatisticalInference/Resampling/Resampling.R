@@ -2,9 +2,6 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 
-#Null Hypothesis would be that the average tooth growth is identical across all doses of all supplements
-
-
 data("ToothGrowth")
 
 d.5<-filter(ToothGrowth,dose==.5)
@@ -71,7 +68,8 @@ d.5<-filter(ToothGrowth,dose==.5)
 d1<-filter(ToothGrowth,dose==1)
 d2<-filter(ToothGrowth,dose==2)
 
-t.test(len~dose,paired=FALSE,data=rbind(d1,d.5))
+#Hy
+t.test(len~dose,paired=FALSE,data=rbind(d1,d.5))$conf
 t.test(len~dose,paired=FALSE,data=rbind(d2,d1))
 t.test(len~dose,paired=FALSE,data=rbind(d2,d.5))
 t.test(len~supp,paired=FALSE,data=ToothGrowth)

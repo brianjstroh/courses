@@ -1,0 +1,658 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Statistical Inference Assignment},
+            pdfauthor={Brian Stroh},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Statistical Inference Assignment}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Brian Stroh}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{September 26, 2018}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(reshape2)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(gridExtra)}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{51}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Part 1: Exponential
+Simulation}\label{part-1-exponential-simulation}
+
+\subsubsection{Overview}\label{overview}
+
+In the Exponential Simulation section of this report, we will explore
+how the
+\href{https://en.wikipedia.org/wiki/Central_limit_theorem}{Central Limit
+Theorem} can be applied to a non-normal variable. We will create 1000
+samples of 40 random instances from an exponential distribution. Then we
+will plot a histogram of the mean and variance of each of the 1000
+samples and compare these to the equivalent normal curves.
+
+\subsubsection{Simulations}\label{simulations}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mySample<-}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rexp}\NormalTok{(}\DataTypeTok{n=}\DecValTok{40}\OperatorTok{*}\DecValTok{1000}\NormalTok{, }\DataTypeTok{rate =}\NormalTok{ .}\DecValTok{2}\NormalTok{),}\DecValTok{40}\NormalTok{,}\DecValTok{1000}\NormalTok{)}
+\NormalTok{Means<-}\KeywordTok{colSums}\NormalTok{(mySample)}\OperatorTok{/}\DecValTok{40} 
+\CommentTok{#Variance calculated using the formula : Var[x] = E[X^2] - (E[x])^2     }
+\CommentTok{#source: https://en.wikipedia.org/wiki/Variance}
+\NormalTok{Variances<-}\KeywordTok{colSums}\NormalTok{(mySample}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\DecValTok{40}\OperatorTok{-}\NormalTok{(}\KeywordTok{colSums}\NormalTok{(mySample)}\OperatorTok{/}\DecValTok{40}\NormalTok{)}\OperatorTok{^}\DecValTok{2}
+\NormalTok{mySampleStats<-}\KeywordTok{tbl_df}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(Means,Variances))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Sample Mean versus Theoretical
+Mean}\label{sample-mean-versus-theoretical-mean}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(mySampleStats, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Means, }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means), }\DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means)), }
+                          \DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{2}\NormalTok{, }\DataTypeTok{n =} \KeywordTok{nrow}\NormalTok{(mySampleStats))) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{theme_dark}\NormalTok{() }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{2}\NormalTok{, }\DataTypeTok{colour =} \StringTok{"white"}\NormalTok{, }\DataTypeTok{fill =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{stat_function}\NormalTok{(}\DataTypeTok{fun =} \ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{dnorm}\NormalTok{(x, }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means), }
+                                            \DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means))) }\OperatorTok{*}\StringTok{ }\KeywordTok{nrow}\NormalTok{(mySampleStats) }\OperatorTok{*}\StringTok{ }\NormalTok{.}\DecValTok{2}\NormalTok{,}
+                    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{color =} \StringTok{"Normal_Distribution"}\NormalTok{), }\DataTypeTok{size =}\DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ (}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{), }\DataTypeTok{color =} \StringTok{"Theoretical_Mean"}\NormalTok{), }\DataTypeTok{linetype=}\StringTok{"dashed"}\NormalTok{, }\DataTypeTok{size=}\FloatTok{1.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means), }\DataTypeTok{color =} \StringTok{"Sample_Mean"}\NormalTok{), }\DataTypeTok{size=}\DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{"Chart Element"}\NormalTok{, }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{Theoretical_Mean =} \StringTok{"green"}\NormalTok{, }
+                                                            \DataTypeTok{Sample_Mean =} \StringTok{"magenta"}\NormalTok{, }
+                                                            \DataTypeTok{Normal_Distribution =} \StringTok{"red"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distribution of Exponential Means"}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Sample Mean ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means),}\DecValTok{3}\NormalTok{)),}
+               \DataTypeTok{x=}\DecValTok{6}\NormalTok{,}\DataTypeTok{y=}\DecValTok{100}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"magenta"}\NormalTok{)}\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Theoretical Mean ="}\NormalTok{,}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{),}
+               \DataTypeTok{x=}\DecValTok{6}\NormalTok{,}\DataTypeTok{y=}\DecValTok{95}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"green"}\NormalTok{)}\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Normal Distribution : N(mu="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means),}\DecValTok{3}\NormalTok{),}
+                                  \StringTok{", sd ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Means)),}\DecValTok{3}\NormalTok{),}\StringTok{")"}\NormalTok{),}
+               \DataTypeTok{x=}\FloatTok{6.65}\NormalTok{,}\DataTypeTok{y=}\DecValTok{90}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/MeanCompare-1.pdf}
+
+It can be seen from the figure above that the Central Limit Theorem
+applies well to our exponential sample means. The Theoretical Mean is
+quite close to the Sample Mean and the shape of the histogram of the
+means is very
+\href{https://en.wikipedia.org/wiki/Normal_distribution}{Gaussian}. This
+distribution is approximately normal.
+
+\subsubsection{Sample Variance versus Theoretical
+Variance}\label{sample-variance-versus-theoretical-variance}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(mySampleStats, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Variances, }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances), }
+                          \DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)), }
+                          \DataTypeTok{binwidth =} \DecValTok{2}\NormalTok{, }\DataTypeTok{n =} \KeywordTok{nrow}\NormalTok{(mySampleStats))) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{theme_dark}\NormalTok{() }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =} \DecValTok{2}\NormalTok{, }\DataTypeTok{colour =} \StringTok{"white"}\NormalTok{, }\DataTypeTok{fill =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{stat_function}\NormalTok{(}\DataTypeTok{fun =} \ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{dnorm}\NormalTok{(x, }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances), }
+                                            \DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances))) }\OperatorTok{*}\StringTok{ }\KeywordTok{nrow}\NormalTok{(mySampleStats) }\OperatorTok{*}\StringTok{ }\DecValTok{2}\NormalTok{,}
+                    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{color =} \StringTok{"Normal_Distribution"}\NormalTok{), }\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ (}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{)}\OperatorTok{^}\DecValTok{2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"Theoretical_Variance"}\NormalTok{), }\DataTypeTok{linetype=}\StringTok{"dashed"}\NormalTok{, }\DataTypeTok{size=}\FloatTok{1.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =} \KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances), }\DataTypeTok{color =} \StringTok{"Sample_Variance"}\NormalTok{), }\DataTypeTok{size=}\DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{"Chart Element"}\NormalTok{, }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{Theoretical_Variance =} \StringTok{"green"}\NormalTok{, }
+                                                            \DataTypeTok{Sample_Variance =} \StringTok{"magenta"}\NormalTok{, }
+                                                            \DataTypeTok{Normal_Distribution =} \StringTok{"red"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distribution of Exponential Variances"}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Sample Variance ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances),}\DecValTok{3}\NormalTok{)),}
+               \DataTypeTok{x=}\DecValTok{40}\NormalTok{,}\DataTypeTok{y=}\DecValTok{90}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"magenta"}\NormalTok{)}\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Theoretical Variance ="}\NormalTok{,(}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{)}\OperatorTok{^}\DecValTok{2}\NormalTok{),}
+               \DataTypeTok{x=}\DecValTok{40}\NormalTok{,}\DataTypeTok{y=}\DecValTok{85}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"green"}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Normal Distribution : N(mu="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances),}\DecValTok{3}\NormalTok{),}
+                                  \StringTok{", sd ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)),}\DecValTok{3}\NormalTok{),}\StringTok{")"}\NormalTok{),}
+               \DataTypeTok{x=}\DecValTok{50}\NormalTok{,}\DataTypeTok{y=}\DecValTok{80}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/VarianceCompare-1.pdf}
+
+Comparing the figure above to the equivalent figure for the means shows
+that the Central Limit Theorem does not apply as well to the variance of
+our exponential samples. The Theoretical Variance is still close to the
+Sample Variance, but the shape of the histogram of the variances is not
+nearly as Gaussian shaped as the histogram of the means was. Perhaps
+this is due to the unit scale of the variance relative to the mean. We
+will attempt to reduce some of the skew shown in the above figure by
+instead plotting the standard deviations of each of the samples.
+
+\subsubsection{Sample StandardDeviation versus Theoretical
+StandardDeviation}\label{sample-standarddeviation-versus-theoretical-standarddeviation}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(mySampleStats, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{sqrt}\NormalTok{(Variances), }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)), }
+                          \DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances))),}
+                          \DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{2}\NormalTok{, }\DataTypeTok{n =} \KeywordTok{nrow}\NormalTok{(mySampleStats))) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{theme_dark}\NormalTok{() }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{2}\NormalTok{, }\DataTypeTok{colour =} \StringTok{"white"}\NormalTok{, }\DataTypeTok{fill =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{stat_function}\NormalTok{(}\DataTypeTok{fun =} \ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{dnorm}\NormalTok{(x, }\DataTypeTok{mean =} \KeywordTok{mean}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)), }
+                                            \DataTypeTok{sd =} \KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)))) }\OperatorTok{*}\StringTok{ }
+\StringTok{                                                 }\KeywordTok{nrow}\NormalTok{(mySampleStats) }\OperatorTok{*}\StringTok{ }\NormalTok{.}\DecValTok{2}\NormalTok{,}
+                    \KeywordTok{aes}\NormalTok{(}\DataTypeTok{color =} \StringTok{"Normal_Distribution"}\NormalTok{), }\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =}\NormalTok{ (}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{), }\DataTypeTok{color =} \StringTok{"Theoretical_Standard_Deviation"}\NormalTok{), }\DataTypeTok{linetype=}\StringTok{"dashed"}\NormalTok{, }
+                 \DataTypeTok{size=}\FloatTok{1.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_vline}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{xintercept =} \KeywordTok{mean}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)), }\DataTypeTok{color =} \StringTok{"Sample_Standard_Deviation"}\NormalTok{), }
+                 \DataTypeTok{size=}\DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{"Chart Element"}\NormalTok{, }\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{Theoretical_Standard_Deviation =} \StringTok{"green"}\NormalTok{, }
+                                                            \DataTypeTok{Sample_Standard_Deviation =} \StringTok{"magenta"}\NormalTok{, }
+                                                            \DataTypeTok{Normal_Distribution =} \StringTok{"red"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distribution of Exponential Standard Deviations"}\NormalTok{)}\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Sample Std Dev ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)),}\DecValTok{3}\NormalTok{)),}
+               \DataTypeTok{x=}\FloatTok{6.05}\NormalTok{,}\DataTypeTok{y=}\DecValTok{100}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"magenta"}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Theoretical Std Dev ="}\NormalTok{,}\DecValTok{1}\OperatorTok{/}\NormalTok{.}\DecValTok{2}\NormalTok{),}
+               \DataTypeTok{x=}\DecValTok{6}\NormalTok{,}\DataTypeTok{y=}\DecValTok{95}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"green"}\NormalTok{)}\OperatorTok{+}
+\StringTok{      }\KeywordTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{,}\DataTypeTok{label=}\KeywordTok{paste}\NormalTok{(}\StringTok{"Normal Distribution : N(mu="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{mean}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances)),}\DecValTok{3}\NormalTok{),}
+                                  \StringTok{", sd ="}\NormalTok{,}\KeywordTok{round}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{var}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(mySampleStats}\OperatorTok{$}\NormalTok{Variances))),}\DecValTok{3}\NormalTok{),}\StringTok{")"}\NormalTok{),}
+               \DataTypeTok{x=}\DecValTok{7}\NormalTok{,}\DataTypeTok{y=}\DecValTok{90}\NormalTok{,}\DataTypeTok{size=}\DecValTok{5}\NormalTok{,}\DataTypeTok{color=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/StdDevCompare-1.pdf}
+
+The Standard Deviation distribution appears to be quite Gaussian and is
+approximately normal. This means that the Central Limit Theorem can be
+applied to summary statistics other than just the mean.
+
+\subsection{Part 2: ToothGrowth Inferential Data
+Analysis}\label{part-2-toothgrowth-inferential-data-analysis}
+
+\subsubsection{ToothGrowth Data
+Summaries}\label{toothgrowth-data-summaries}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#~~~~~~~~~~~~~~~~~~~~~~~~RESAMPLING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+\KeywordTok{data}\NormalTok{(}\StringTok{"ToothGrowth"}\NormalTok{)}
+
+\CommentTok{#Creating subsets for hypothesis testing and resampling}
+\NormalTok{d.}\DecValTok{5}\NormalTok{<-}\KeywordTok{filter}\NormalTok{(ToothGrowth,dose}\OperatorTok{==}\NormalTok{.}\DecValTok{5}\NormalTok{)}
+\NormalTok{d1<-}\KeywordTok{filter}\NormalTok{(ToothGrowth,dose}\OperatorTok{==}\DecValTok{1}\NormalTok{)}
+\NormalTok{d2<-}\KeywordTok{filter}\NormalTok{(ToothGrowth,dose}\OperatorTok{==}\DecValTok{2}\NormalTok{)}
+\NormalTok{sOJ<-}\KeywordTok{filter}\NormalTok{(ToothGrowth,supp}\OperatorTok{==}\StringTok{"OJ"}\NormalTok{)}
+\NormalTok{sVC<-}\KeywordTok{filter}\NormalTok{(ToothGrowth,supp}\OperatorTok{==}\StringTok{"VC"}\NormalTok{)}
+
+\CommentTok{#Summary for full dataset}
+\KeywordTok{summary}\NormalTok{(ToothGrowth)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len        supp         dose      
+##  Min.   : 4.20   OJ:30   Min.   :0.500  
+##  1st Qu.:13.07   VC:30   1st Qu.:0.500  
+##  Median :19.25           Median :1.000  
+##  Mean   :18.81           Mean   :1.167  
+##  3rd Qu.:25.27           3rd Qu.:2.000  
+##  Max.   :33.90           Max.   :2.000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Summary for supplement dose of .5 mg}
+\KeywordTok{summary}\NormalTok{(d.}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len         supp         dose    
+##  Min.   : 4.200   OJ:10   Min.   :0.5  
+##  1st Qu.: 7.225   VC:10   1st Qu.:0.5  
+##  Median : 9.850           Median :0.5  
+##  Mean   :10.605           Mean   :0.5  
+##  3rd Qu.:12.250           3rd Qu.:0.5  
+##  Max.   :21.500           Max.   :0.5
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Summary for supplement dose of 1 mg}
+\KeywordTok{summary}\NormalTok{(d1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len        supp         dose  
+##  Min.   :13.60   OJ:10   Min.   :1  
+##  1st Qu.:16.25   VC:10   1st Qu.:1  
+##  Median :19.25           Median :1  
+##  Mean   :19.73           Mean   :1  
+##  3rd Qu.:23.38           3rd Qu.:1  
+##  Max.   :27.30           Max.   :1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Summary for supplement dose of 2 mg}
+\KeywordTok{summary}\NormalTok{(d2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len        supp         dose  
+##  Min.   :18.50   OJ:10   Min.   :2  
+##  1st Qu.:23.52   VC:10   1st Qu.:2  
+##  Median :25.95           Median :2  
+##  Mean   :26.10           Mean   :2  
+##  3rd Qu.:27.82           3rd Qu.:2  
+##  Max.   :33.90           Max.   :2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Summary for supplement OJ}
+\KeywordTok{summary}\NormalTok{(sOJ)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len        supp         dose      
+##  Min.   : 8.20   OJ:30   Min.   :0.500  
+##  1st Qu.:15.53   VC: 0   1st Qu.:0.500  
+##  Median :22.70           Median :1.000  
+##  Mean   :20.66           Mean   :1.167  
+##  3rd Qu.:25.73           3rd Qu.:2.000  
+##  Max.   :30.90           Max.   :2.000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Summary for supplement VC}
+\KeywordTok{summary}\NormalTok{(sVC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       len        supp         dose      
+##  Min.   : 4.20   OJ: 0   Min.   :0.500  
+##  1st Qu.:11.20   VC:30   1st Qu.:0.500  
+##  Median :16.50           Median :1.000  
+##  Mean   :16.96           Mean   :1.167  
+##  3rd Qu.:23.10           3rd Qu.:2.000  
+##  Max.   :33.90           Max.   :2.000
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p1<-}\KeywordTok{ggplot}\NormalTok{(ToothGrowth, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{ supp, }\DataTypeTok{y=}\NormalTok{len, }\DataTypeTok{color=}\NormalTok{dose), }\DataTypeTok{geom =} \StringTok{"dotplot"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Supplement vs. Tooth Growth"}\NormalTok{)}
+\NormalTok{p2<-}\KeywordTok{ggplot}\NormalTok{(ToothGrowth, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{ dose, }\DataTypeTok{y=}\NormalTok{len, }\DataTypeTok{color=}\NormalTok{supp), }\DataTypeTok{geom =} \StringTok{"dotplot"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Supplement Dosage vs. Tooth Growth"}\NormalTok{)}
+\KeywordTok{grid.arrange}\NormalTok{(p1, p2, }\DataTypeTok{ncol =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/ToothGrowth Summaries-1.pdf}
+
+In the Supplement vs.~Tooth Growth plot above, we can see that the range
+for the OJ supplement lies entirely within the range of the VC
+supplement. This will likely cause problems when trying to differentiate
+the impacts of each of the supplements on tooth growth.\\
+In the Supplement Dosage vs.~Tooth Growth plot above, so can see a
+noticeable shift in tooth gowth as the dosage increases, although there
+is still a noticeable amount of overlap in the ranges.\\
+Conducting a quick
+\href{https://en.wikipedia.org/wiki/Resampling_(statistics)}{resampling}
+exercise should help to clear up whether the distributions are in fact
+distinct or not.
+
+\subsubsection{ToothGrowth Resampling
+Visualizations}\label{toothgrowth-resampling-visualizations}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reSample_Dose<-}\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1000}\NormalTok{,}\DataTypeTok{yVar=}\DecValTok{3}\NormalTok{)\{}
+\NormalTok{      rows.}\DecValTok{5}\NormalTok{<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(d.}\DecValTok{5}\NormalTok{),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{      rows1<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(d1),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{      rows2<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(d2),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+      
+\NormalTok{      dSamp.}\DecValTok{5}\NormalTok{<-d.}\DecValTok{5}\NormalTok{[rows.}\DecValTok{5}\NormalTok{,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+\NormalTok{      dSamp1<-d1[rows1,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+\NormalTok{      dSamp2<-d2[rows2,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+      
+\NormalTok{      d.5_avg<-}\KeywordTok{mean}\NormalTok{(dSamp.}\DecValTok{5}\OperatorTok{$}\NormalTok{len)}
+\NormalTok{      d1_avg<-}\KeywordTok{mean}\NormalTok{(dSamp1}\OperatorTok{$}\NormalTok{len)}
+\NormalTok{      d2_avg<-}\KeywordTok{mean}\NormalTok{(dSamp2}\OperatorTok{$}\NormalTok{len)}
+      
+      \KeywordTok{return}\NormalTok{(}\KeywordTok{c}\NormalTok{(d.5_avg,d1_avg,d2_avg))}
+\NormalTok{\}}
+
+\NormalTok{mySample<-}\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{t}\NormalTok{(}\KeywordTok{replicate}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\KeywordTok{reSample_Dose}\NormalTok{(}\DataTypeTok{n=}\DecValTok{20}\NormalTok{))))}
+\KeywordTok{names}\NormalTok{(mySample) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"dose.5"}\NormalTok{,}\StringTok{"dose1"}\NormalTok{,}\StringTok{"dose2"}\NormalTok{)}
+\NormalTok{mySampleMelt<-}\KeywordTok{melt}\NormalTok{(mySample)}
+\KeywordTok{names}\NormalTok{(mySampleMelt)<-}\KeywordTok{c}\NormalTok{(}\StringTok{"dose"}\NormalTok{,}\StringTok{"tooth.length"}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(mySampleMelt,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{tooth.length, }\DataTypeTok{color =}\NormalTok{ dose)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{01}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distributions of Toothgrowth Length at Each Dosage"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/Dosage_Resampling-1.pdf}
+
+As we can see from the 10,000 resamples, it is likely that there is a
+different average tooth growth at each dose level. There is very little
+overlap in these resampled averages, so will probably reject a
+hypothesis that the average tooth growth is the same across all dose
+levels. A resample size of 20 was chosen for this exercise because there
+are 20 data points for each dose level in the original dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reSample_Supp<-}\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1000}\NormalTok{,}\DataTypeTok{yVar=}\DecValTok{2}\NormalTok{)\{}
+\NormalTok{      rowsOJ<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(sOJ),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{      rowsVC<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(sVC),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+      
+\NormalTok{      sSampOJ<-sOJ[rowsOJ,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+\NormalTok{      sSampVC<-sVC[rowsVC,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+      
+\NormalTok{      OJ_avg<-}\KeywordTok{mean}\NormalTok{(sSampOJ}\OperatorTok{$}\NormalTok{len)}
+\NormalTok{      VC_avg<-}\KeywordTok{mean}\NormalTok{(sSampVC}\OperatorTok{$}\NormalTok{len)}
+      
+      \KeywordTok{return}\NormalTok{(}\KeywordTok{c}\NormalTok{(OJ_avg,VC_avg))}
+\NormalTok{\}}
+
+\NormalTok{mySample2<-}\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{t}\NormalTok{(}\KeywordTok{replicate}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\KeywordTok{reSample_Supp}\NormalTok{(}\DataTypeTok{n=}\DecValTok{30}\NormalTok{))))}
+\KeywordTok{names}\NormalTok{(mySample2) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"suppOJ"}\NormalTok{,}\StringTok{"suppVC"}\NormalTok{)}
+\NormalTok{mySampleMelt2<-}\KeywordTok{melt}\NormalTok{(mySample2)}
+\KeywordTok{names}\NormalTok{(mySampleMelt2)<-}\KeywordTok{c}\NormalTok{(}\StringTok{"supp"}\NormalTok{,}\StringTok{"tooth.length"}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(mySampleMelt2,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{tooth.length, }\DataTypeTok{color =}\NormalTok{ supp)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{01}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distributions of Toothgrowth Length for Each Supplement"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/Supplement_Resampling-1.pdf}
+
+As we can see from the 10,000 resamples, it is unlikely that we will
+reject a hypothesis that the average tooth growth is the same across
+both supplement levels. There is significant overlap in the resampled
+tooth growth distributions for these two supplements. A resample size of
+30 was chosen for this exercise because there are 30 data points for
+each supplement level in the original dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{reSample_Supp<-}\ControlFlowTok{function}\NormalTok{(}\DataTypeTok{n=}\DecValTok{1000}\NormalTok{,}\DataTypeTok{yVar=}\DecValTok{2}\NormalTok{)\{}
+\NormalTok{      rowsOJ<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(sOJ),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+\NormalTok{      rowsVC<-}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(sVC),}\DataTypeTok{size=}\NormalTok{n,}\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+      
+\NormalTok{      sSampOJ<-sOJ[rowsOJ,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+\NormalTok{      sSampVC<-sVC[rowsVC,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,yVar)]}
+      
+\NormalTok{      OJ_avg<-}\KeywordTok{mean}\NormalTok{(sSampOJ}\OperatorTok{$}\NormalTok{len)}
+\NormalTok{      VC_avg<-}\KeywordTok{mean}\NormalTok{(sSampVC}\OperatorTok{$}\NormalTok{len)}
+      
+      \KeywordTok{return}\NormalTok{(}\KeywordTok{c}\NormalTok{(OJ_avg,VC_avg))}
+\NormalTok{\}}
+
+\NormalTok{mySample2<-}\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{t}\NormalTok{(}\KeywordTok{replicate}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\KeywordTok{reSample_Supp}\NormalTok{(}\DataTypeTok{n=}\DecValTok{300}\NormalTok{))))}
+\KeywordTok{names}\NormalTok{(mySample2) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"suppOJ"}\NormalTok{,}\StringTok{"suppVC"}\NormalTok{)}
+\NormalTok{mySampleMelt2<-}\KeywordTok{melt}\NormalTok{(mySample2)}
+\KeywordTok{names}\NormalTok{(mySampleMelt2)<-}\KeywordTok{c}\NormalTok{(}\StringTok{"supp"}\NormalTok{,}\StringTok{"tooth.length"}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(mySampleMelt2,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{tooth.length, }\DataTypeTok{color =}\NormalTok{ supp)) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{binwidth =}\NormalTok{ .}\DecValTok{01}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Distributions of Toothgrowth Length for Each Supplement"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Statistical_Inference_Assignment_files/figure-latex/Supplement_Resampling_Part2-1.pdf}
+
+As evidenced from this figure, it is likely that we would reject the
+null hypothesis of the two supplements having the same average tooth
+growth length \textbf{if our sample size was 10 times larger} than in
+the original dataset, assuming that the same distribution of tooth
+growth would result.
+
+\subsubsection{ToothGrowth T-Testing}\label{toothgrowth-t-testing}
+
+\paragraph{Assumptions:}\label{assumptions}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The ToothGrowth dataset contains all available information.
+\item
+  The experiment conducted was done in a scientific manner.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This includes the assumption that there was no overlap in test
+    subjects being given varying doses or varying supplements.
+  \end{itemize}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#~~~~~~~~~~~~~~~~~~~~~~~~HYPOTHESIS }\AlertTok{TESTING}\CommentTok{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+\CommentTok{#Null Hypothesis is: The average tooth growth is identical across all doses and all supplements}
+
+\CommentTok{#T-testing the alternative hypothesis: The average tooth growth changes as supplement dosage changes.}
+\KeywordTok{t.test}\NormalTok{(len}\OperatorTok{~}\NormalTok{dose,}\DataTypeTok{paired=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{data=}\KeywordTok{rbind}\NormalTok{(d1,d.}\DecValTok{5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  len by dose
+## t = -6.4766, df = 37.986, p-value = 1.268e-07
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -11.983781  -6.276219
+## sample estimates:
+## mean in group 0.5   mean in group 1 
+##            10.605            19.735
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{t.test}\NormalTok{(len}\OperatorTok{~}\NormalTok{dose,}\DataTypeTok{paired=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{data=}\KeywordTok{rbind}\NormalTok{(d2,d1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  len by dose
+## t = -4.9005, df = 37.101, p-value = 1.906e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -8.996481 -3.733519
+## sample estimates:
+## mean in group 1 mean in group 2 
+##          19.735          26.100
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{t.test}\NormalTok{(len}\OperatorTok{~}\NormalTok{dose,}\DataTypeTok{paired=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{data=}\KeywordTok{rbind}\NormalTok{(d2,d.}\DecValTok{5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  len by dose
+## t = -11.799, df = 36.883, p-value = 4.398e-14
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -18.15617 -12.83383
+## sample estimates:
+## mean in group 0.5   mean in group 2 
+##            10.605            26.100
+\end{verbatim}
+
+\paragraph{Dosage Conclusions}\label{dosage-conclusions}
+
+We tested each of the dosage subsets against each other, and with each
+set of doses we can be 95\% confident that the average tooth growth is
+different between the dose amounts. Our P value is much smaller than 5\%
+in each case. Thus, we reject the null hypothesis in favor of the
+alternative hypothesis that average tooth growth varies by supplement
+dose amount.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#T-testing the alternative hypothesis: The average tooth growth changes as supplement changes.}
+\KeywordTok{t.test}\NormalTok{(len}\OperatorTok{~}\NormalTok{supp,}\DataTypeTok{paired=}\OtherTok{FALSE}\NormalTok{,}\DataTypeTok{data=}\NormalTok{ToothGrowth)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  len by supp
+## t = 1.9153, df = 55.309, p-value = 0.06063
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.1710156  7.5710156
+## sample estimates:
+## mean in group OJ mean in group VC 
+##         20.66333         16.96333
+\end{verbatim}
+
+\paragraph{Supplement Conclusions}\label{supplement-conclusions}
+
+We tested the two supplement subsets against each other, and we cannot
+be 95\% confident that the average tooth growth is different between the
+supplements. This is because:\\
+1. Our P-Value for this test is greater than our alpha 5\% (1 - 95\%).\\
+2. Our 95\% confidence interval contains the possibility of a 0
+difference in average tooth growth as a function of supplement type.\\
+Thus, we fail to reject the null hypothesis in favor of the alternative
+hypothesis that average tooth growth varies by supplement.
+
+
+\end{document}
