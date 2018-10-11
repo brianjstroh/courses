@@ -1,0 +1,115 @@
+---
+title: "Transmission Vs MPG Regression"
+author: "Brian Stroh"
+date: "October 11, 2018"
+output: html_document
+---
+
+```{r setup,message = F}
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(car)
+data(mtcars)
+```
+
+## Exploratory Analysis
+
+```{r explore}
+str(mtcars)
+summary(filter(mtcars, am == 1)$mpg)
+summary(filter(mtcars, am == 0)$mpg)
+
+t.test(filter(mtcars, am == 1)$mpg, filter(mtcars, am == 0)$mpg, paired = FALSE, 
+       alternative = "greater")$p.val
+```
+
+If the transmission type were the sole predictor, this would allow us to
+conclude that manual transmissions have a greater average mpg.
+
+## Model Selection
+
+We can not use logistic regression because that is concerned with binary **outcomes**, not **inputs**.
+Now we'll build various models and examine models of interest
+
+```{r models}
+fit1<-lm(mpg~am-1,mtcars)
+fit2<-update(fit1,mpg~am+wt-1)
+fit3<-update(fit2,mpg~am+wt+qsec-1)
+fit4<-update(fit3,mpg~am+wt+qsec+hp-1)
+
+fit1Int<-lm(mpg~am,mtcars)
+fit2Int<-update(fit1Int,mpg~am+wt)
+fit3Int<-update(fit2Int,mpg~am+wt+qsec)
+fit4Int<-update(fit3Int,mpg~am+wt+qsec+hp)
+
+summary(fit1Int)$coef
+summary(fit2Int)$coef
+summary(fit3Int)$coef
+summary(fit4Int)$coef
+summary(fit3)$coef
+
+```
+
+At first glance, we can make the following observations about these models:
+
+* The model with 4 regressors and an intercept has components that we would reject as being significant at even the 10% level. This will let us focus on just the models with 3 regressors or less.
+* The transmission indicator regressor 'am' encounters Simpson's paradox when regressed along with weight.
+      + Notice that the sign for the estimate switches from positive to negative and back to positive when going from a 1 regressor model to a 3 regressor model.
+* The intercept becomes less significant as we add more regressors to the model.
+      + In the next section, we'll explain why we want to keep the intercept.
+* Intuitively, with the model without the intercept, the regressors have more impact on the predicted mpg than the model with the intercept.
+* Focusing on the model fit3Int, we can see that a transmission type of 1 will result in a greater estimated mpg than a transmission type of 0.
+      + The car weight has a great negative influence on the predicted mpg.
+      + The quarter mile time appears to have a small impact, but this variable has larger values than wt and am.
+      + One would think that quarter mile time would be a result of several other car components, but it turns out that qsec is an excellent consolidated metric for a car's power in this dataset.
+
+## Variance Inflation Factors
+      
+```{r VarInflFacts}
+vif(fit3Int)
+vif(fit3)
+```
+
+With the model that has no intercept component, the variance inflation factors are much greater than the model with the intercept. For this reason we will elect to keep the intercept even though our p-value of 3 regressor model for the intercept tells us that the intercept is insignificant.
+
+## Analysis of Variance
+```{r anova}
+anova(fit1Int,fit2Int,fit3Int,fit4Int)
+```
+This F test shows us that *the model with 3 regressors is significant* at the .1% level.
+The 4th regressor, hp, was tested in this report because it was the variable that had the next most significant F Test result of the remaining mtcars variables. This anova test proves that we should only be regressing 3 variables.
+
+```{r resids}
+mtc2<-cbind(mtcars,mpg_fit1=fit1Int$coef[1]+mtcars$am*fit1Int$coef[2])
+mtc2<-cbind(mtc2,mpg_fit2=fit2Int$coef[1]+mtcars$am*fit2Int$coef[2]+mtcars$wt*fit2Int$coef[3])
+mtc2<-cbind(mtc2,mpg_fit3=fit3Int$coef[1]+mtcars$am*fit3Int$coef[2]+mtcars$wt*fit3Int$coef[3]+mtcars$qsec*fit3Int$coef[4])
+
+mtc2<-cbind(mtc2,resids1=resid(fit1Int))
+mtc2<-cbind(mtc2,resids2=resid(fit2Int))
+mtc2<-cbind(mtc2,resids3=resid(fit3Int))
+
+g1<-ggplot(mtc2,aes(x=mpg_fit1,y=mpg))+geom_point()+geom_abline(slope=1,intercept = 0,lwd=3,col="red") +
+      ggtitle("MPG vs Transmission Type")
+g2<-ggplot(mtc2,aes(x=mpg_fit2,y=mpg))+geom_point()+geom_abline(slope=1,intercept = 0,lwd=3,col="yellow") +
+      ggtitle("Weight Regressor Added")
+g3<-ggplot(mtc2,aes(x=mpg_fit3,y=mpg))+geom_point()+geom_abline(slope=1,intercept = 0,lwd=3,col="green") +
+      ggtitle("Quater Mile Time Regressor Added")
+g4<-ggplot(mtc2,aes(x=mpg, y=resids1))+geom_point()+geom_abline(intercept=0, slope = 0, col = "blue")+
+      ggtitle("1 Regressor Residuals")
+g5<-ggplot(mtc2,aes(x=mpg, y=resids2))+geom_point()+geom_abline(intercept=0, slope = 0, col = "blue")+
+      ggtitle("2 Regressors Residuals")
+g6<-ggplot(mtc2,aes(x=mpg, y=resids3))+geom_point()+geom_abline(intercept=0, slope = 0, col = "blue")+
+      ggtitle("3 Regressors Residuals")
+grid.arrange(g1,g4,g2,g5,g3,g6,ncol=2, nrow=3, top = grid.text("Actual MPG Versus Model Fitted MPG",gp=gpar(fontsize=18,font=7)))
+```
+
+Notice that as we add each of the selected regressors, our models' residuals are noticeably reduced.
+
+## Testing Resdiuals for Normality
+```{r resid_diagonistics}
+plot(fit3Int, which=2)
+```
+
+There is some cause for concern in the potential non-normality of this model's residiuals, but it is difficult to tell with such a small dataset.
