@@ -1,0 +1,87 @@
+---
+title: "ML_project"
+author: "Brian Stroh"
+output: html_document
+---
+
+## Overview
+The purpose of this project is to develop a model that can assign a qualitative score that assess how well an activity was performed. The score is based on the letter grade A to E scale.  
+The data for this project come from this source: [Groupware@LES Human Activity Recognition](http://groupware.les.inf.puc-rio.br/har).
+
+A few models will be created with R's caret package (using 75% of the data for model training and 25% for cross validation).
+The model with the greatest overall accuracy on the cross validation data set will be used to predict the quality of 20 records in a final test set.
+
+```{r setup, messages = FALSE, warnings = FALSE, cache=TRUE}
+library(caret)
+library(dplyr)
+library(rattle)
+
+#Get data
+download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "train_data.csv")
+download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "test_data.csv")
+
+#Set seed for reproducibility
+set.seed(42)
+
+training<-read.csv("train_data.csv")
+testing<-read.csv("test_data.csv")
+
+#Custom function to be used for removing unneccessary columns
+getNAProportion<-function(df){
+      colSums(is.na(df)*1)/nrow(df)
+}
+```
+
+## Cleaning the Data
+
+The source data has many records with #DIV/0! errors that cannot be used for quantitative analysis.
+Additionally, there are many variables that have either identical or missing values across all records.
+These records and variables will be removed, as they will not contribute anything meaningful to a predictive model.
+
+```{r fixData, cache=TRUE}
+#Remove error rows and variables with near zero variance
+
+errorrows<-rowSums((training=="#DIV/0!")*1, na.rm = TRUE)
+training<-training[errorrows==0,]
+training<-training[,getNAProportion(training)!=1]
+training<-training[,((nearZeroVar(training, saveMetrics= TRUE)$nzv*1)==0)]
+
+testing<-testing[,getNAProportion(testing)!=1]
+testing<-testing[,((nearZeroVar(testing, saveMetrics= TRUE)$nzv*1)==0)]
+```
+
+## Single Tree Model
+To get a sense of how complex this data is, we will start by fitting a model from a single tree to the training data.
+
+```{r tree, cache=TRUE}
+inTrain<-createDataPartition(training$classe,p=.75,list=FALSE)
+newTrain<-training[inTrain,-1]
+newTest<-training[-inTrain,-1]
+
+treeFit <- train(classe ~ ., data=newTrain, method="rpart")
+fancyRpartPlot(treeFit$finalModel)
+
+predtree<-predict(treeFit,newdata = newTest)
+confusionMatrix(predtree,newTest$classe)
+```
+
+## We can see that there is a lot of room for improvement from this single tree
+
+```{r forest, cache=TRUE}
+#From https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-randomForestPerformance.md
+fitControl <- trainControl(method = "cv", number = 10, allowParallel = TRUE)
+parallelforestFit <- train(classe ~ ., data=newTrain, method="rf", trControl=fitControl)
+predpforest<-predict(parallelforestFit,newdata = newTest)
+confusionMatrix(predpforest,newTest$classe)
+```
+
+```{r boost, cache=TRUE}
+boostFit <- train(classe ~ ., data=newTrain, method="gbm")
+predboost<-predict(boostFit,newdata = newTest)
+confusionMatrix(predboost,newTest$classe)
+```
+
+```{r final, cache=TRUE}
+#Final Results
+predforest2<-predict(parallelforestFit,newdata = testing)
+```
