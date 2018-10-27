@@ -1,7 +1,10 @@
 ---
 title: "ML_project"
 author: "Brian Stroh"
-output: html_document
+output:
+  md_document:
+    variant: markdown_github
+  html_document: default
 ---
 
 ## Overview
