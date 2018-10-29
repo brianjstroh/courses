@@ -1,12 +1,15 @@
 ---
 title: "ML_project"
 author: "Brian Stroh"
-output: html_document
+output:
+  md_document:
+    variant: markdown_github
+  html_document: default
 ---
 
 ## Overview
-The purpose of this project is to develop a model that can assign a qualitative score that assess how well an activity was performed. The score is based on the letter grade A to E scale.  
-The data for this project come from this source: [Groupware@LES Human Activity Recognition](http://groupware.les.inf.puc-rio.br/har).
+The purpose of this project is to develop a model that can assign a qualitative score that assesses how well an activity was performed. The score is based on the letter grade scale A to E.  
+The data for this project come from this source: [Groupware@LES Weight Lifting Exercises](http://groupware.les.inf.puc-rio.br/har).
 
 A few models will be created with R's caret package (using 75% of the data for model training and 25% for cross validation).
 The model with the greatest overall accuracy on the cross validation data set will be used to predict the quality of 20 records in a final test set.
@@ -17,8 +20,10 @@ library(dplyr)
 library(rattle)
 
 #Get data
-download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "train_data.csv")
-download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "test_data.csv")
+download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", 
+              destfile = "train_data.csv")
+download.file(url = "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", 
+              destfile = "test_data.csv")
 
 #Set seed for reproducibility
 set.seed(42)
@@ -65,23 +70,41 @@ predtree<-predict(treeFit,newdata = newTest)
 confusionMatrix(predtree,newTest$classe)
 ```
 
-## We can see that there is a lot of room for improvement from this single tree
+## Random Forest Model
+We can see that there is a lot of room for improvement from this single tree, based on how well it predicts on the cross validation set.  
+Let's see how a random forest compares to this single tree.
 
 ```{r forest, cache=TRUE}
 #From https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-randomForestPerformance.md
 fitControl <- trainControl(method = "cv", number = 10, allowParallel = TRUE)
+
 parallelforestFit <- train(classe ~ ., data=newTrain, method="rf", trControl=fitControl)
 predpforest<-predict(parallelforestFit,newdata = newTest)
 confusionMatrix(predpforest,newTest$classe)
 ```
 
+The fit is really good! The model took a while to run, so let's see if we can achieve a similar level of out-of-sample error with a generalized boost model.  
+
+## Generalized Boost Model
+
 ```{r boost, cache=TRUE}
-boostFit <- train(classe ~ ., data=newTrain, method="gbm")
+boostFit <- train(classe ~ ., data=newTrain, method="gbm", verbose = FALSE)
 predboost<-predict(boostFit,newdata = newTest)
 confusionMatrix(predboost,newTest$classe)
 ```
 
+The generalized boost model also took a long while to run, and the accuracy is not quite as high as the random forest model.
+Thus, the random forest model will be our chosen model to submit. Let's predict the classe factors of the test data set.
+
+## Final Results
+
 ```{r final, cache=TRUE}
 #Final Results
 predforest2<-predict(parallelforestFit,newdata = testing)
+table(seq(from=1,to=nrow(testing), by=1),predforest2)
 ```
+
+The Weight Lifting Exercises dataset is credited to:
+**Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz5V6P4ggCs**
