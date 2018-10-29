@@ -1,0 +1,80 @@
+---
+title: "Map Log"
+author: "Brian Stroh"
+date: "October 29, 2018"
+output: html_document
+runtime: shiny
+---
+
+```{r setup } 
+#,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(shiny)
+library(leaflet)
+
+```
+
+
+```{r cars, echo = FALSE}
+my_addresses <- data.frame(Label="testlabel",
+                             Streets="teststreet",
+                             City="testcity", 
+                             State="teststate",  
+                             Zip="testzip", 
+                             URL="testURL",
+                             longitude = .1,
+                             latitude = -0.1,
+                             stringsAsFactors=FALSE) 
+#my_addresses <- data.frame(Label=character(),
+#                             Streets=character(),
+#                             City=character(), 
+#                             State=character(),  
+#                             Zip=character(), 
+#                             URL=character(),
+#                             longitude = .1,
+#                             latitude = -0.1,
+#                             stringsAsFactors=FALSE) 
+
+#my_addresses[1,]<-c("testlabel","teststreet","testcity","teststate","testzip","testurl.com")
+
+ui <- fluidPage(pageWithSidebar(
+            headerPanel(""),
+            sidebarPanel(
+                    textInput("label","Address Label","-"),
+                    textInput("street","Street Address","-"),
+                    textInput("city","City","-"),
+                    textInput("state","State","-"),
+                    textInput("zip","Zip Code","-"),
+                    textInput("url","HyperLink","-"),
+                    actionButton("add", "Add Location")
+              ),
+            mainPanel(
+                  tabsetPanel(
+                        tabPanel("Current Logged Locations",
+                                leafletOutput("map")
+                        ),
+                        tabPanel("Logged Location Table",
+                                leafletOutput("mydf")
+                        )
+                  )
+            )
+))
+
+server <- function(input, output, session) {
+
+  mydf <- eventReactive(input$add, {
+      #Need something here to add points to a dynamic dataframe
+       
+        #renderDataTable(input$my_addresses) [1]
+        cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
+  }, ignoreNULL = FALSE)
+
+  output$map <- renderLeaflet({
+    leaflet() %>%
+      addTiles() %>%
+      addMarkers(data = mydf())
+  })
+}
+
+shinyApp(ui, server, options = list(height = 600))
+```
