@@ -5,47 +5,34 @@ date: "October 29, 2018"
 output: html_document
 runtime: shiny
 ---
-<!-- <div id="map" style="width:100%"> -->
-<!-- html, body { -->
-<!--     height: 100%; -->
-<!-- } -->
-
-<!-- #map { -->
-<!--     height: 100%; -->
-<!--     background: #000; -->
-<!-- }</div> -->
-<div id="map" style = "width: 100%, height: 1000px;></div>
-
 
 <style type="text/css">
 .main-container {
-  max-width: 940px;
-  margin-left: 0px;
-  margin-right: auto;
+      max-width: 940px;
+      margin-left: 0px;
+      margin-right: auto;
 }
 code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
+      color: inherit;
+      background-color: rgba(0, 0, 0, 0.04);
 }
 img {
-  max-width:100%;
-  height: 100%;
+      max-width:100%;
+      height: 100%;
 }
 .tabbed-pane {
-  padding-top: 12px;
+      padding-top: 12px;
 }
 .html-widget {
-  margin-bottom: 20px;
+      margin-bottom: 20px;
 }
 button.code-folding-btn:focus {
-  outline: none;
+      outline: none;
 }
 
-
-
-
-
 </style>
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -53,6 +40,7 @@ library(shiny)
 library(leaflet)
 library(dplyr)
 library(data.table)
+library(urltools)
 
 getLatLong<- function(address){
       if(address$street !="-" && address$city !="-" && address$state !="-" && address$zip !="-"){
@@ -83,6 +71,13 @@ getLatLong<- function(address){
       
 }
 
+patch_url<-function(my_url){
+      ifelse(
+            is.na(url_parse(my_url)$scheme), #check if url has something like 'http://'
+            my_url<-paste0("http://",my_url), #if not, then add it
+            my_url)
+}
+
 
 
 ```
@@ -99,6 +94,13 @@ ui <- fluidPage(pageWithSidebar(
                     textInput("state","State","-"),
                     textInput("zip","Zip Code","-"),
                     textInput("url","HyperLink","-"),
+                    fileInput("icon", "Choose Pictures",
+                              multiple = FALSE,
+                              accept = c("image/gif",
+                                          "image/jpeg",
+                                          "image/png",
+                                          "image/tiff",
+                                          "image/svg+xml")),
                     actionButton("add", "Add Location")
               ),
             mainPanel(
@@ -120,13 +122,15 @@ server <- function(input, output, session) {
                                       state = rep("-",10),
                                       zip = rep("-",10),
                                       url = rep("-",10),
-                                      longitude= rnorm(10) - 122.5,
-                                      latitude = rnorm(10) + 47)
-      my_icon<-makeIcon(
-            iconUrl = "https://www.getdigital.eu/web/getdigital/gfx/products/__generated__resized/380x380/Aufkleber_Trollface.jpg",
-            iconWidth = 40, iconHeight = 40,
-            iconAnchorX = 15, iconAnchorY = 15
-      )
+                                      icon = rep("http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",10),
+                                      longitude= rnorm(10) - 122.5, #Hidden Field
+                                      latitude = rnorm(10) + 47, #Hidden Field
+                                      link = as.character(rep("<a href='http://www.google.com/'>fake link</a>",10))) #Hidden Field
+      # my_icon<-makeIcon(
+      #       iconUrl = "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
+      #       iconWidth = 40, iconHeight = 40,
+      #       iconAnchorX = 15, iconAnchorY = 15
+      # )
         mydf <- reactive({
               my_addresses$data
         })
@@ -137,24 +141,36 @@ server <- function(input, output, session) {
                                                           city = input$city,
                                                           state = input$state,
                                                           zip = input$zip))
+                  cat(file=stderr(),"icon:",input$icon$datapath,"testing if length(input$icon$name)==0",length(input$icon$name)==0,"/n")
+                  selectedIcon<-ifelse(length(input$icon$name)==0,
+                                      "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
+                                      input$icon$datapath)
                   new_row=data.frame(
                         label = input$label,
                         street = input$street,
                         city = input$city,
                         state = input$state,
                         zip = input$zip,
-                        url = input$url,      
+                        url = input$url,
+                        icon = #"http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
+                              selectedIcon,
                         longitude=currLatLong[2],
-                        latitude=currLatLong[1])
+                        latitude=currLatLong[1],
+                        link=paste0("<a href='",patch_url(input$url),"'>",input$label,"</a>"))
             }
-            my_addresses$data<-rbind(my_addresses$data,new_row)
+            my_addresses$data<-rbind(mydf(),new_row)
         })
         
-      
+        
         output$map <- renderLeaflet({
-          leaflet() %>%
-            addTiles() %>%
-            addMarkers(data = select(my_addresses$data,latitude,longitude), icon = my_icon)
+            leaflet() %>%
+                  addTiles() %>%
+                  addMarkers(data = select(mydf(),latitude,longitude), 
+                             icon = makeIcon(iconUrl = mydf()$icon,
+                                    iconWidth = 40, iconHeight = 40,
+                                    iconAnchorX = 15, iconAnchorY = 15),
+                             popup = mydf()$link,
+                             clusterOptions = markerClusterOptions())
         })
         
         
