@@ -5,6 +5,47 @@ date: "October 29, 2018"
 output: html_document
 runtime: shiny
 ---
+<!-- <div id="map" style="width:100%"> -->
+<!-- html, body { -->
+<!--     height: 100%; -->
+<!-- } -->
+
+<!-- #map { -->
+<!--     height: 100%; -->
+<!--     background: #000; -->
+<!-- }</div> -->
+<div id="map" style = "width: 100%, height: 1000px;></div>
+
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: 0px;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: 100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+
+
+
+
+
+</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -13,30 +54,41 @@ library(leaflet)
 library(dplyr)
 library(data.table)
 
+getLatLong<- function(address){
+      if(address$street !="-" && address$city !="-" && address$state !="-" && address$zip !="-"){
+            findme<-as.character(paste(address$street,address$city,paste(address$state,paste0(address$zip,"\",null,"),sep=" "),sep=", "))
+            address$street<-gsub(" ","+",address$street)
+            lookupURL<-paste0("https://www.google.com/maps/place/",address$street,",+",address$city,",+",address$state,"+",address$zip,"/")
+      }else if(address$street !="-" && address$city !="-" && address$state !="-"){
+            findme<-as.character(paste(address$street,address$city,paste0(address$state,"\",null,"),sep=", "))
+            address$street<-gsub(" ","+",address$street)
+            lookupURL<-paste0("https://www.google.com/maps/place/",address$street,",+",address$city,",+",address$state,"/")
+      }else if(address$city !="-" && address$state !="-"){
+            findme<-as.character(paste(address$city,paste0(address$state,"\",null,"),sep=", "))
+            lookupURL<-paste0("https://www.google.com/maps/place/",address$city,",+",address$state,"/")
+      }else if(address$street !="-"){
+            findme<-as.character(paste0(address$street,"\",null,"))
+            address$street<-gsub(" ","+",address$street)
+            lookupURL<-paste0("https://www.google.com/maps/place/",address$street,"/")
+      }else if(address$city !="-"){
+            findme<-as.character(paste0(address$city,"\",null,"))
+            lookupURL<-paste0("https://www.google.com/maps/place/",address$city,"/")
+      }
+      download.file(lookupURL,destfile = "rawtext.txt")
+      rawtext<-readChar("rawtext.txt", file.info("rawtext.txt")$size)
+      pos = regexpr(findme, rawtext)
+      newtext<-substring(rawtext,pos+nchar(findme)+11,pos+nchar(findme)+70)
+      return(as.numeric(unlist(strsplit(substring(newtext,1,regexpr("]",newtext)-1),","))))
+      
+      
+}
+
+
+
 ```
 
 
-```{r shiny, echo = FALSE}
-my_addresses <- data.frame(Label="testlabel",
-                             Streets="teststreet",
-                             City="testcity", 
-                             State="teststate",  
-                             Zip="testzip", 
-                             URL="testURL",
-                             longitude = .1,
-                             latitude = -0.1,
-                             stringsAsFactors=FALSE) 
-#my_addresses <- data.frame(Label=character(),
-#                             Streets=character(),
-#                             City=character(), 
-#                             State=character(),  
-#                             Zip=character(), 
-#                             URL=character(),
-#                             longitude = .1,
-#                             latitude = -0.1,
-#                             stringsAsFactors=FALSE) 
-
-#my_addresses[1,]<-c("testlabel","teststreet","testcity","teststate","testzip","testurl.com")
+```{r shiny, echo = FALSE, fig.pos='left'}
 
 ui <- fluidPage(pageWithSidebar(
             headerPanel(""),
@@ -47,8 +99,6 @@ ui <- fluidPage(pageWithSidebar(
                     textInput("state","State","-"),
                     textInput("zip","Zip Code","-"),
                     textInput("url","HyperLink","-"),
-                    textInput("long","Longitude","-"),
-                    textInput("lat","Latitude","-"),
                     actionButton("add", "Add Location")
               ),
             mainPanel(
@@ -64,34 +114,53 @@ ui <- fluidPage(pageWithSidebar(
 ))
 server <- function(input, output, session) {
       my_addresses <- reactiveValues()
-      my_addresses$data <- data.table(latitude = rnorm(40) * 2 + 13,longitude= rnorm(40) + 48)
-            
+      my_addresses$data <- data.table(label = rep("-",10),
+                                      street = rep("-",10),
+                                      city = rep("-",10),
+                                      state = rep("-",10),
+                                      zip = rep("-",10),
+                                      url = rep("-",10),
+                                      longitude= rnorm(10) - 122.5,
+                                      latitude = rnorm(10) + 47)
+      my_icon<-makeIcon(
+            iconUrl = "https://www.getdigital.eu/web/getdigital/gfx/products/__generated__resized/380x380/Aufkleber_Trollface.jpg",
+            iconWidth = 40, iconHeight = 40,
+            iconAnchorX = 15, iconAnchorY = 15
+      )
         mydf <- reactive({
-              
-            #new_row=data.frame(
-            #      longitude=input$long,
-            #      latitude=input$lat)
-            #my_addresses<-rbind(my_addresses,new_row)
-            #select(my_addresses$data, longitude, latitude)
-            my_addresses$data
+              my_addresses$data
         })
         
         observeEvent(input$add,{
-            new_row=data.frame(
-                  latitude=as.double(input$lat),
-                  longitude=as.double(input$long))
+            if (input$street!="-"||input$city!="-"){
+                  currLatLong<- getLatLong(data.frame(street = input$street,
+                                                          city = input$city,
+                                                          state = input$state,
+                                                          zip = input$zip))
+                  new_row=data.frame(
+                        label = input$label,
+                        street = input$street,
+                        city = input$city,
+                        state = input$state,
+                        zip = input$zip,
+                        url = input$url,      
+                        longitude=currLatLong[2],
+                        latitude=currLatLong[1])
+            }
             my_addresses$data<-rbind(my_addresses$data,new_row)
         })
+        
       
         output$map <- renderLeaflet({
           leaflet() %>%
             addTiles() %>%
-            addMarkers(data = my_addresses$data)
+            addMarkers(data = select(my_addresses$data,latitude,longitude), icon = my_icon)
         })
         
         
-        output$address_table<-renderDataTable(mydf())
+        output$address_table<-renderDataTable(mydf())#select(mydf(),-c(longitude,latitude)))
       }
 
-shinyApp(ui, server, options = list(height = 1300))
+shinyApp(ui, server, options = list(height = 1300, width =1600))
 ```
+
