@@ -5,8 +5,8 @@ account: bstroh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 556319
-bundleId: 1685665
+bundleId: 1685887
 url: https://bstroh.shinyapps.io/Map_Log/
-when: 1541523920.09502
+when: 1541531152.33781
 asMultiple: FALSE
 asStatic: FALSE
