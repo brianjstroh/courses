@@ -122,7 +122,7 @@ server <- function(input, output, session) {
                                       state = rep("-",10),
                                       zip = rep("-",10),
                                       url = rep("-",10),
-                                      icon = rep("http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",10),
+                                      icon = rep("C:/Users/brian/Desktop/AAAAAA.PNG",10),
                                       longitude= rnorm(10) - 122.5, #Hidden Field
                                       latitude = rnorm(10) + 47, #Hidden Field
                                       link = as.character(rep("<a href='http://www.google.com/'>fake link</a>",10))) #Hidden Field
@@ -141,10 +141,10 @@ server <- function(input, output, session) {
                                                           city = input$city,
                                                           state = input$state,
                                                           zip = input$zip))
-                  cat(file=stderr(),"icon:",input$icon$datapath,"testing if length(input$icon$name)==0",length(input$icon$name)==0,"/n")
+                  cat(file=stderr(),"icon:",unlist(input$icon),"testing if length(input$icon$name)==0",length(input$icon$name)==0,"/n")
                   selectedIcon<-ifelse(length(input$icon$name)==0,
                                       "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
-                                      input$icon$datapath)
+                                      input$icon$name)
                   new_row=data.frame(
                         label = input$label,
                         street = input$street,
@@ -174,7 +174,8 @@ server <- function(input, output, session) {
         })
         
         
-        output$address_table<-renderDataTable(mydf())#select(mydf(),-c(longitude,latitude)))
+        output$address_table<-renderDataTable(mydf())
+              
       }
 
 shinyApp(ui, server, options = list(height = 1300, width =1600))
