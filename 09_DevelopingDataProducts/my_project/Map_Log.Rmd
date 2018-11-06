@@ -1,7 +1,7 @@
 ---
 title: "Map Log"
 author: "Brian Stroh"
-date: "October 29, 2018"
+date: "November 6, 2018"
 output: html_document
 runtime: shiny
 ---
@@ -84,6 +84,12 @@ patch_url<-function(my_url){
 
 
 ```{r shiny, echo = FALSE, fig.pos='left'}
+#Notes for future development:
+      #Look here for resetting inputs: https://stackoverflow.com/questions/24265980/reset-inputs-button-in-shiny-app
+      #Can't use uploaded picture as icon with R, but probably with HTML/JS
+      #In order to really make useful, would need to set up a database with a user login that stores inputs
+      #Would also need to add functionality to delete rows
+      #Also need to force the links to open in a new tab so that they don't kill the shiny app when in the browser
 
 ui <- fluidPage(pageWithSidebar(
             headerPanel(""),
@@ -94,13 +100,7 @@ ui <- fluidPage(pageWithSidebar(
                     textInput("state","State","-"),
                     textInput("zip","Zip Code","-"),
                     textInput("url","HyperLink","-"),
-                    fileInput("icon", "Choose Pictures",
-                              multiple = FALSE,
-                              accept = c("image/gif",
-                                          "image/jpeg",
-                                          "image/png",
-                                          "image/tiff",
-                                          "image/svg+xml")),
+      #Might add later              fileInput("icon", "Choose Pictures", multiple = FALSE,accept = c("image/gif","image/jpeg","image/png","image/tiff","image/svg+xml")),
                     actionButton("add", "Add Location")
               ),
             mainPanel(
@@ -115,22 +115,19 @@ ui <- fluidPage(pageWithSidebar(
             )
 ))
 server <- function(input, output, session) {
+      test_cells <- 5
       my_addresses <- reactiveValues()
-      my_addresses$data <- data.table(label = rep("-",10),
-                                      street = rep("-",10),
-                                      city = rep("-",10),
-                                      state = rep("-",10),
-                                      zip = rep("-",10),
-                                      url = rep("-",10),
-                                      icon = rep("C:/Users/brian/Desktop/AAAAAA.PNG",10),
-                                      longitude= rnorm(10) - 122.5, #Hidden Field
-                                      latitude = rnorm(10) + 47, #Hidden Field
-                                      link = as.character(rep("<a href='http://www.google.com/'>fake link</a>",10))) #Hidden Field
-      # my_icon<-makeIcon(
-      #       iconUrl = "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
-      #       iconWidth = 40, iconHeight = 40,
-      #       iconAnchorX = 15, iconAnchorY = 15
-      # )
+      my_addresses$data <- data.table(label = rep("-",test_cells),
+                                      street = rep("-",test_cells),
+                                      city = rep("-",test_cells),
+                                      state = rep("-",test_cells),
+                                      zip = rep("-",test_cells),
+                                      url = rep("-",test_cells),
+                                      icon = rep("http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",test_cells),
+                                      longitude= rnorm(test_cells) - 122.5, #Hidden Field
+                                      latitude = rnorm(test_cells) + 47, #Hidden Field
+                                      link = as.character(rep("<a href='http://www.google.com/'>Example Link(Google)</a>",test_cells))) #Hidden Field
+      
         mydf <- reactive({
               my_addresses$data
         })
@@ -141,10 +138,8 @@ server <- function(input, output, session) {
                                                           city = input$city,
                                                           state = input$state,
                                                           zip = input$zip))
-                  cat(file=stderr(),"icon:",unlist(input$icon),"testing if length(input$icon$name)==0",length(input$icon$name)==0,"/n")
-                  selectedIcon<-ifelse(length(input$icon$name)==0,
-                                      "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
-                                      input$icon$name)
+#icon debug       cat(file=stderr(),"icon:",unlist(input$icon),"testing if length(input$icon$name)==0",length(input$icon$name)==0,"/n")
+#icon debug       selectedIcon<-ifelse(length(input$icon$name)==0,"http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",input$icon$name)
                   new_row=data.frame(
                         label = input$label,
                         street = input$street,
@@ -152,8 +147,8 @@ server <- function(input, output, session) {
                         state = input$state,
                         zip = input$zip,
                         url = input$url,
-                        icon = #"http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
-                              selectedIcon,
+                        icon = "http://pluspng.com/img-png/trollface-png-troll-face-png-image-19697-900.png",
+                              #selectedIcon,
                         longitude=currLatLong[2],
                         latitude=currLatLong[1],
                         link=paste0("<a href='",patch_url(input$url),"'>",input$label,"</a>"))
@@ -174,10 +169,12 @@ server <- function(input, output, session) {
         })
         
         
-        output$address_table<-renderDataTable(mydf())
+        output$address_table<-renderDataTable(select(mydf(),-c(longitude, latitude, link)))
               
       }
 
-shinyApp(ui, server, options = list(height = 1300, width =1600))
+shinyApp(ui, server, options = list(height = 600, width =1400))
 ```
 
+**In each popup link, be sure to right click and open in a new tab/window.**  
+*Please close this page when you are finished.*
