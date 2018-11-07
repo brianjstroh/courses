@@ -1,45 +1,17 @@
----
-title: "Map Log"
-author: "Brian Stroh"
-date: "November 6, 2018"
-output: html_document
-runtime: shiny
----
+#
+# This is the server logic of a Shiny web application. You can run the 
+# application by clicking 'Run App' above.
+#
+# Find out more about building applications with Shiny here:
+# 
+#    http://shiny.rstudio.com/
+#
 
-<style type="text/css">
-.main-container {
-      max-width: 940px;
-      margin-left: 0px;
-      margin-right: auto;
-}
-code {
-      color: inherit;
-      background-color: rgba(0, 0, 0, 0.04);
-}
-img {
-      max-width:100%;
-      height: 100%;
-}
-.tabbed-pane {
-      padding-top: 12px;
-}
-.html-widget {
-      margin-bottom: 20px;
-}
-button.code-folding-btn:focus {
-      outline: none;
-}
-
-</style>
-
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(shiny)
 library(leaflet)
 library(dplyr)
 library(data.table)
+library(DT)
 library(urltools)
 
 getLatLong<- function(address){
@@ -79,41 +51,8 @@ patch_url<-function(my_url){
 }
 
 
-
-```
-
-
-```{r shiny, echo = FALSE, fig.pos='left'}
-#Notes for future development:
-      #Look here for resetting inputs: https://stackoverflow.com/questions/24265980/reset-inputs-button-in-shiny-app
-      #Can't use uploaded picture as icon with R, but probably with HTML/JS
-      #In order to really make useful, would need to set up a database with a user login that stores inputs
-      #Would also need to add functionality to delete rows
-      #Also need to force the links to open in a new tab so that they don't kill the shiny app when in the browser
-
-ui <- fluidPage(pageWithSidebar(
-            headerPanel(""),
-            sidebarPanel(
-                    textInput("label","Address Label","-"),
-                    textInput("street","Street Address","-"),
-                    textInput("city","City","-"),
-                    textInput("state","State","-"),
-                    textInput("zip","Zip Code","-"),
-                    textInput("url","HyperLink","-"),
-                    actionButton("add", "Add Location")
-              ),
-            mainPanel(
-                  tabsetPanel(
-                        tabPanel("Current Logged Locations",
-                                leafletOutput("map")
-                        ),
-                        tabPanel("Logged Location Table",
-                                dataTableOutput("address_table")
-                        )
-                  )
-            )
-))
-server <- function(input, output, session) {
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
       test_cells <- 5
       my_addresses <- reactiveValues()
       my_addresses$data <- data.table(label = rep("-",test_cells),
@@ -127,16 +66,16 @@ server <- function(input, output, session) {
                                       latitude = rnorm(test_cells) + 47, #Hidden Field
                                       link = as.character(rep("<a href='http://www.google.com/'>Example Link(Google)</a>",test_cells))) #Hidden Field
       
-        mydf <- reactive({
-              my_addresses$data
-        })
-        
-        observeEvent(input$add,{
+      mydf <- reactive({
+            my_addresses$data
+      })
+      
+      observeEvent(input$add,{
             if (input$street!="-"||input$city!="-"){
                   currLatLong<- getLatLong(data.frame(street = input$street,
-                                                          city = input$city,
-                                                          state = input$state,
-                                                          zip = input$zip))
+                                                      city = input$city,
+                                                      state = input$state,
+                                                      zip = input$zip))
                   new_row=data.frame(
                         label = input$label,
                         street = input$street,
@@ -150,27 +89,23 @@ server <- function(input, output, session) {
                         link=paste0("<a href='",patch_url(input$url),"'>",input$label,"</a>"))
             }
             my_addresses$data<-rbind(mydf(),new_row)
-        })
-        
-        
-        output$map <- renderLeaflet({
+      })
+      
+      
+      output$map <- renderLeaflet({
             leaflet() %>%
                   addTiles() %>%
                   addMarkers(data = select(mydf(),latitude,longitude), 
                              icon = makeIcon(iconUrl = mydf()$icon,
-                                    iconWidth = 40, iconHeight = 40,
-                                    iconAnchorX = 15, iconAnchorY = 15),
+                                             iconWidth = 40, iconHeight = 40,
+                                             iconAnchorX = 15, iconAnchorY = 15),
                              popup = mydf()$link,
                              clusterOptions = markerClusterOptions())
-        })
-        
-        
-        output$address_table<-renderDataTable(select(mydf(),-c(longitude, latitude, link)))
-              
-      }
+      })
+      
+      
+      output$address_table<-DT::renderDataTable(datatable(select(mydf(),-c(longitude, latitude, link)),  filter="top", selection="multiple", escape=FALSE, 
+                                            options = list(sDom  = '<"top">flrt<"bottom">ip')))
+      
+})
 
-shinyApp(ui, server, options = list(height = 600, width =1400))
-```
-
-**In each popup link, be sure to right click and open in a new tab/window.**  
-*Please close this page when you are finished.*

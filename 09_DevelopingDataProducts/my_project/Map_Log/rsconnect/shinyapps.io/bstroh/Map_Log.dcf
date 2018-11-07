@@ -1,0 +1,13 @@
+name: Map_Log
+title: Map_Log
+username:
+account: bstroh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 556319
+bundleId: 1688253
+url: https://bstroh.shinyapps.io/Map_Log/
+when: 1541624872.64099
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: www/bootstrap.min.css
