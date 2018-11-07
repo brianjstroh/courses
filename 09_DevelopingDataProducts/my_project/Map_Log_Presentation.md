@@ -5,7 +5,7 @@ date: November 7th, 2018
 autosize: true
 
 The application can be found here: <https://bstroh.shinyapps.io/Map_Log/>
-![Map Log Screenshot](maplog.png)
+<!-- ![Map Log Screenshot](maplog.png) -->
 
 
 About the Map Log Tool

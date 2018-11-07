@@ -5,7 +5,7 @@ date: November 7th, 2018
 autosize: true
 
 The application can be found here: <https://bstroh.shinyapps.io/Map_Log/>
-![Map Log Screenshot](maplog.png)
+<!-- ![Map Log Screenshot](maplog.png) -->
 
 
 About the Map Log Tool
@@ -25,7 +25,7 @@ Geocoding Demo
 ========================================================
 The following (partial) function is the foundation for the Map Log Tool's geocoding utility:
 <font size="8">
-```{r LatLongDemo, messages = FALSE}
+```{r LatLongDemo, messages = FALSE, cache = FALSE}
 getLatLong<- function(address){
             findme<-as.character(paste(address$street,
                                        address$city,
