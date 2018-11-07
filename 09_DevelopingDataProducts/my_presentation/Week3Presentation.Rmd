@@ -1,0 +1,39 @@
+---
+title: "Week 3 Presentation"
+author: "Brian Stroh"
+date: "November 7, 2018"
+output: ioslides_presentation
+---
+
+```{r Setup, include=FALSE}
+library(plotly)
+library(ggplot2)
+```
+
+## Building Code for Plotly Plots
+
+```{r ToothGrowthPlotlys}
+data("ToothGrowth")
+p1<-ggplot(ToothGrowth, 
+           aes(x= supp, y=len, color=as.factor(dose)),
+           geom = "dotplot") + 
+      geom_point() + 
+      ggtitle("Supplement vs. Tooth Growth")
+p2<-ggplot(ToothGrowth, 
+           aes(x= as.factor(dose), y=len, color=supp),
+           geom = "dotplot") + 
+      geom_point() + 
+      ggtitle("Supplement Dosage vs. Tooth Growth")
+```
+
+## Supplement vs. Tooth Growth
+
+```{r plot1}
+ggplotly(p=p1)
+```
+
+## Doseage vs. Tooth Growth
+
+```{r plot2}
+ggplotly(p=p2)
+```
